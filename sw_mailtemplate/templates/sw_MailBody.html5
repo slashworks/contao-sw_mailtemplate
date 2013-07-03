@@ -1,0 +1,32 @@
+<html>
+<head>
+    <?php if($this->style): ?>
+
+        <style type="text/css" rel="stylesheet">
+            <?php echo $this->style;?>
+        </style>
+
+    <?php endif; ?>
+</head>
+
+<?php if(is_array($this->data)) :?>
+    <body>
+    <table cellpaaing=0 cellspacing=0>
+        <?php foreach ($this->data as $k=>$v) :?>
+            <tr>
+                <td class="label"><?php echo $this->label[$k]; ?></td>
+                <td class="value">
+                    <?php if(is_array($v)) :?>
+                        <?php foreach($v as $item) :?>
+                            <?php echo $item ; ?><br />
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <?php echo $v; ?>
+                    <?php endif;?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+    </body>
+<?php endif; ?>
+</html>
