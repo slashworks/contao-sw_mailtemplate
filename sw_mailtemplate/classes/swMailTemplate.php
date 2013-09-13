@@ -39,10 +39,16 @@ class swMailTemplate{
     protected $arrData = array();
 
 
+    /** Mail Form Object
+     * @var object
+     */
+    protected $objForm;
+
+
     /** Mail Label array
      * @var array
      */
-    protected $arrLabel;
+    protected $arrLabel = array();
 
 
     /** Prepare sw mailer
@@ -58,21 +64,20 @@ class swMailTemplate{
         //set data
         $this->set('data',$arrData);
         $this->set('label',$arrLabel);
-        $this->set('objForm',$objForm);
-
+        $this->objForm = $objForm;
 
         //check mail transfer settings
         if($this->startSwMailer()){
 
             //set Templates
-            $this->strBodyTemplate = $this->arrData['objForm']->sw_mail_bodyTemplate;
+            $this->strBodyTemplate = $this->objForm->sw_mail_bodyTemplate;
 
-            if($this->arrData['objForm']->sw_mail_styleTemplate){
-                $this->strStyleTemplate = $this->arrData['objForm']->sw_mail_styleTemplate;
+            if($this->objForm->sw_mail_styleTemplate){
+                $this->strStyleTemplate = $this->objForm->sw_mail_styleTemplate;
             }
 
             //reset contao mail transfer
-            $objForm->sendViaEmail = '';
+            $this->objForm->sendViaEmail = '';
 
             //generate sw mail
             $this->generateMail();
@@ -98,7 +103,8 @@ class swMailTemplate{
     protected function startSwMailer(){
 
         //sendViaMail and MailBody Template is set
-        if($this->arrData['objForm']->Template->sendViaEmail == '1' and $this->arrData['objForm']->sw_mail_bodyTemplate){
+        if($this->objForm->sendViaEmail == '1' and $this->objForm->sw_mail_bodyTemplate){
+
             return true;
         }
         else{
@@ -111,8 +117,6 @@ class swMailTemplate{
      *
      */
     protected function generateMail(){
-
-        $objForm = $this->arrData['objForm'];
 
         //body template
         $mailTpl = new FrontendTemplate($this->strBodyTemplate);
@@ -133,10 +137,10 @@ class swMailTemplate{
         $mail->from = $GLOBALS['TL_ADMIN_EMAIL'];
         $mail->fromName = $GLOBALS['TL_ADMIN_NAME'];
 
-        $mail->__set('subject',$objForm->Template->subject);
+        $mail->__set('subject',$this->objForm->subject);
         $mail->__set('html',$body);
 
-        $mail->sendTo($objForm->Template->recipient);
+        $mail->sendTo($this->objForm->recipient);
 
     }
 
