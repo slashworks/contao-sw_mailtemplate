@@ -137,8 +137,31 @@ class swMailTemplate{
         $mail->from = $GLOBALS['TL_ADMIN_EMAIL'];
         $mail->fromName = $GLOBALS['TL_ADMIN_NAME'];
 
-        $mail->__set('subject',$this->objForm->subject);
-        $mail->__set('html',$body);
+        print_r($this->objForm);
+
+        if($this->objForm->format != 'email'){
+            $mail->__set('subject',$this->objForm->subject);
+            $mail->__set('html',$body);
+        }
+        else{
+
+            if(strlen($this->arrData['data']['subject'])){
+                $mail->__set('subject',$this->arrData['data']['subject']);
+            }
+            else{
+                $mail->__set('subject',$this->objForm->subject);
+            }
+
+            if(strlen($this->arrData['data']['cc'])){
+                $mail->sendCc($this->arrData['data']['cc']);
+            }
+
+            if(strlen($this->arrData['data']['bcc'])){
+                $mail->sendBcc($this->arrData['data']['bcc']);
+            }
+
+            $mail->__set('html',$this->arrData['data']['message']);
+        }
 
         $mail->sendTo($this->objForm->recipient);
 
