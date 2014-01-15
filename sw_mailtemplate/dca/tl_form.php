@@ -32,10 +32,17 @@ $GLOBALS['TL_DCA']['tl_form']['fields']['sw_mail_styleTemplate'] = array(
     'sql'                     => "varchar(255) NOT NULL default ''"
 );
 
+$GLOBALS['TL_DCA']['tl_form']['fields']['sw_mail_type'] = array(
+    'label'                   => &$GLOBALS['TL_LANG']['sw_mailtemplate']['sw_mail_type'],
+    'inputType'               => 'checkbox',
+    'eval'                    => array('tl_class'=>'w50 m12'),
+    'sql'                     => "char(1) NOT NULL default ''"
+);
+
 
 //add to palletes
 $GLOBALS['TL_DCA']['tl_form']['subpalettes']['sendViaEmail'] = str_replace(
     'skipEmpty',
-    'skipEmpty,sw_mail_bodyTemplate,sw_mail_styleTemplate',
+    'skipEmpty,sw_mail_bodyTemplate,sw_mail_styleTemplate,sw_mail_type',
     $GLOBALS['TL_DCA']['tl_form']['subpalettes']['sendViaEmail']
 );

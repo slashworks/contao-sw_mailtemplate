@@ -17,6 +17,7 @@
  */
 $GLOBALS['TL_LANG']['sw_mailtemplate']['sw_mail_styleTemplate'] = array('Style Template','Wählen Sie das entsprechende Style Template für diesen Mailversand aus');
 $GLOBALS['TL_LANG']['sw_mailtemplate']['sw_mail_bodyTemplate'] = array('Body Template','Wählen Sie das entsprechende Body Template für diesen Mailversand aus');
+$GLOBALS['TL_LANG']['sw_mailtemplate']['sw_mail_type'] = array('HTML E-Mail','Die Mail als HTML E-Mail versenden');
 
 $GLOBALS['TL_LANG']['MOD']['sw_mailtemplate'] = array("Mail Templates", "Modul zur generierung eines Mail Templates für den Formulargenerator");
 $GLOBALS['TL_LANG']['FMD']['sw_mailtemplate'] = array("Mail Template", "Modul zur generierung eines Mail Templates für den Formulargenerator");

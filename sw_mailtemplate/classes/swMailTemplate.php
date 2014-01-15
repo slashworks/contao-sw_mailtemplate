@@ -51,6 +51,12 @@ class swMailTemplate{
     protected $arrLabel = array();
 
 
+    /** Mail Label array
+     * @var array
+     */
+    protected $fields;
+
+
     /** Prepare sw mailer
      *
      * check and set mail transfer settings
@@ -104,7 +110,6 @@ class swMailTemplate{
 
         //sendViaMail and MailBody Template is set
         if($this->objForm->sendViaEmail == '1' and $this->objForm->sw_mail_bodyTemplate){
-
             return true;
         }
         else{
@@ -118,18 +123,6 @@ class swMailTemplate{
      */
     protected function generateMail(){
 
-        //body template
-        $mailTpl = new FrontendTemplate($this->strBodyTemplate);
-
-        //stylesheet template
-        $styleTpl = new FrontendTemplate($this->strStyleTemplate);
-
-        //template vars
-        $mailTpl->style = $styleTpl->parse();
-        $mailTpl->data = $this->arrData['data'];
-        $mailTpl->label = $this->arrData['label'];
-
-        $body = $mailTpl->parse();
 
         $mail = new \Email();
 
@@ -137,12 +130,16 @@ class swMailTemplate{
         $mail->from = $GLOBALS['TL_ADMIN_EMAIL'];
         $mail->fromName = $GLOBALS['TL_ADMIN_NAME'];
 
-        print_r($this->objForm);
 
+        // check format
         if($this->objForm->format != 'email'){
+
             $mail->__set('subject',$this->objForm->subject);
-            $mail->__set('html',$body);
+
+            $message = $this->compileTemplateData();
+
         }
+
         else{
 
             if(strlen($this->arrData['data']['subject'])){
@@ -160,11 +157,56 @@ class swMailTemplate{
                 $mail->sendBcc($this->arrData['data']['bcc']);
             }
 
-            $mail->__set('html',$this->arrData['data']['message']);
+            $message = $this->arrData['data']['message'];
+
         }
+
+
+        // check Mail Type
+        ($this->objForm->sw_mail_type) ? $type = 'html' : $type = 'text';
+
+        $mail->__set($type,$message);
 
         $mail->sendTo($this->objForm->recipient);
 
     }
+
+
+
+    protected function compileTemplateData(){
+
+
+        //body template
+        $mailTpl = new FrontendTemplate($this->strBodyTemplate);
+
+        //stylesheet template
+        $styleTpl = new FrontendTemplate($this->strStyleTemplate);
+
+        //if Type = HTML add style Feature
+        if($this->sw_mail_type){
+            $mailTpl->style = $styleTpl->parse();
+        }
+
+
+        //get more field infos
+        $fieldsObj = \FormFieldModel::findPublishedByPid($this->objForm->id);
+
+        foreach($fieldsObj->fetchAll() as $k=>$v){
+
+            $this->fields[$v['name']] = array(
+                'type'  => $v['type'],
+                'label' => $v['label'],
+                'class' => $v['class'],
+                'data'  => $this->arrData['data'][$v['name']],
+            );
+
+        }
+
+        $mailTpl->data = $this->fields;
+        $message = $mailTpl->parse();
+
+        return $message;
+    }
+
 
 }
