@@ -51,12 +51,6 @@ class swMailTemplate{
     protected $arrLabel = array();
 
 
-    /** Mail Label array
-     * @var array
-     */
-    protected $fields;
-
-
     /** Prepare sw mailer
      *
      * check and set mail transfer settings
@@ -71,6 +65,7 @@ class swMailTemplate{
         $this->set('data',$arrData);
         $this->set('label',$arrLabel);
         $this->objForm = $objForm;
+
 
         //check mail transfer settings
         if($this->startSwMailer()){
@@ -163,6 +158,7 @@ class swMailTemplate{
         // check Mail Type
         ($this->objForm->sw_mail_type) ? $type = 'html' : $type = 'text';
 
+
         $mail->__set($type,$message);
         $mail->sendTo($this->objForm->recipient);
 
@@ -188,7 +184,7 @@ class swMailTemplate{
         foreach($fieldsObj->fetchAll() as $k=>$v){
 
             if($v['name']){
-                $this->fields[$v['name']] = array(
+                $fields[$v['name']] = array(
                     'type'  => $v['type'],
                     'label' => $v['label'],
                     'class' => $v['class'],
@@ -198,7 +194,7 @@ class swMailTemplate{
 
         }
 
-        $mailTpl->data = $this->fields;
+        $mailTpl->data = $fields;
         $message = $mailTpl->parse();
 
         return $message;
