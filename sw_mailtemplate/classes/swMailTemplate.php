@@ -201,8 +201,6 @@ class swMailTemplate{
         $mailTpl->data = $this->fields;
         $message = $mailTpl->parse();
 
-        print_r($this->fields);
-
         return $message;
     }
 
