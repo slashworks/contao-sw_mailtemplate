@@ -135,7 +135,6 @@ class swMailTemplate{
         if($this->objForm->format != 'email'){
 
             $mail->__set('subject',$this->objForm->subject);
-
             $message = $this->compileTemplateData();
 
         }
@@ -161,12 +160,10 @@ class swMailTemplate{
 
         }
 
-
         // check Mail Type
         ($this->objForm->sw_mail_type) ? $type = 'html' : $type = 'text';
 
         $mail->__set($type,$message);
-
         $mail->sendTo($this->objForm->recipient);
 
     }
@@ -179,31 +176,32 @@ class swMailTemplate{
         //body template
         $mailTpl = new FrontendTemplate($this->strBodyTemplate);
 
-        //stylesheet template
-        $styleTpl = new FrontendTemplate($this->strStyleTemplate);
-
         //if Type = HTML add style Feature
-        if($this->sw_mail_type){
+        if($this->objForm->sw_mail_styleTemplate and $this->objForm->sw_mail_type){
+            $styleTpl = new FrontendTemplate($this->strStyleTemplate);
             $mailTpl->style = $styleTpl->parse();
         }
-
 
         //get more field infos
         $fieldsObj = \FormFieldModel::findPublishedByPid($this->objForm->id);
 
         foreach($fieldsObj->fetchAll() as $k=>$v){
 
-            $this->fields[$v['name']] = array(
-                'type'  => $v['type'],
-                'label' => $v['label'],
-                'class' => $v['class'],
-                'data'  => $this->arrData['data'][$v['name']],
-            );
+            if($v['name']){
+                $this->fields[$v['name']] = array(
+                    'type'  => $v['type'],
+                    'label' => $v['label'],
+                    'class' => $v['class'],
+                    'value'  => $this->arrData['data'][$v['name']],
+                );
+            }
 
         }
 
         $mailTpl->data = $this->fields;
         $message = $mailTpl->parse();
+
+        print_r($this->fields);
 
         return $message;
     }
